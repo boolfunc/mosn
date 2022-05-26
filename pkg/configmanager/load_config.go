@@ -20,10 +20,10 @@ package configmanager
 import (
 	"encoding/json"
 	"io/ioutil"
+	"net/http"
 	"path/filepath"
 	"sync"
 
-	"github.com/ghodss/yaml"
 	"mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/log"
 )
@@ -55,19 +55,41 @@ func RegisterConfigLoadFunc(f ConfigLoadFunc) {
 func DefaultConfigLoad(path string) *v2.MOSNConfig {
 	log.StartLogger.Infof("load config from :  %s", path)
 	content, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.StartLogger.Fatalf("[config] [default load] load config failed, error: %v", err)
-	}
 	cfg := &v2.MOSNConfig{}
-	if yamlFormat(path) {
-		bytes, err := yaml.YAMLToJSON(content)
+	bodyStr := ""
+	if err != nil {
+		//log.StartLogger.Fatalf("[config] [default load] load config failed, error: %v", err)
+		log.StartLogger.Errorf("[config] default load load local config failed, error %v", err)
+		log.StartLogger.Infof("[config] trying to get config from remote")
+		req, _ := http.NewRequest("GET", path, nil)
+		res, _ := http.DefaultClient.Do(req)
+		//contentFromRemote, err := http.Get(path)
+		//if err != nil {
+		//	log.StartLogger.Fatalf("[config] get config from remote, %v, %v", res, err)
+		//}
+		defer res.Body.Close()
+		content, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			log.StartLogger.Fatalf("[config] [default load] translate yaml to json error: %v", err)
+			log.StartLogger.Fatalf("read fail")
 		}
-		content = bytes
+		bodyStr = string(content)
+		log.StartLogger.Infof("[config] get config %v", string(content))
+
+	} else {
+		println(content)
 	}
+
+	//cfg := &v2.MOSNConfig{}
+
+	//if yamlFormat(path) {
+	//	bytes, err := yaml.YAMLToJSON(content)
+	//	if err != nil {
+	//		log.StartLogger.Fatalf("[config] [default load] translate yaml to json error: %v", err)
+	//	}
+	//	content = bytes
+	//}
 	// translate to lower case
-	err = json.Unmarshal(content, cfg)
+	err = json.Unmarshal([]byte(bodyStr), cfg)
 	if err != nil {
 		log.StartLogger.Fatalf("[config] [default load] json unmarshal config failed, error: %v", err)
 	}
