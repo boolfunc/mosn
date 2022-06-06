@@ -3,6 +3,7 @@
 	"servers":[
 		{
 			"default_log_path":"stdout",
+			"default_log_level": "DEBUG",
 			"routers":[
 				{
 					"router_config_name":"client_router",
@@ -11,7 +12,7 @@
 						"domains": ["*"],
 						"routers": [
 							{
-								"match":{"headers":[{"name":"service","value":".*"}]},
+								"match":{"headers":[{"name":"service","value":"testSofa"}]},
 								"route":{"cluster_name":"clientCluster"}
 							}
 						]

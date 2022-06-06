@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
 	"time"
 
 	"mosn.io/api"
@@ -106,6 +107,9 @@ func (s *Server) HandleRequest(conn net.Conn, cmd interface{}) (api.XRespFrame, 
 }
 
 func main() {
+
+	fmt.Println(os.Getenv("CONFIG_URL"))
+
 	if server := NewServer("127.0.0.1:8080", (&bolt.XCodec{}).NewXProtocol(context.Background())); server != nil {
 		server.Run()
 	}

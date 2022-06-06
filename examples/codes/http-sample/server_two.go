@@ -22,8 +22,8 @@ import (
 	"net/http"
 )
 
-func ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("[UPSTREAM][SERVER1]receive request %s", r.URL)
+func ServeHTTP2(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("[UPSTREAM][SERVER2]receive request %s", r.URL)
 	fmt.Println()
 
 	w.Header().Set("Content-Type", "text/plain")
@@ -43,6 +43,6 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", ServeHTTP)
-	http.ListenAndServe("127.0.0.1:8080", nil)
+	http.HandleFunc("/", ServeHTTP2)
+	http.ListenAndServe("127.0.0.1:8081", nil)
 }

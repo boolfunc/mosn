@@ -19,6 +19,7 @@ package main
 
 import (
 	_ "flag"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -97,6 +98,7 @@ func newMosnApp(startCmd *cli.Command) *cli.App {
 	app.Usage = "MOSN is modular observable smart netstub."
 	app.Flags = cmdStart.Flags
 
+	fmt.Println(os.Getenv("CONFIG_URL"))
 	//commands
 	app.Commands = []cli.Command{
 		cmdStart,

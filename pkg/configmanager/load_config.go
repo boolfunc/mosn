@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"sync"
 
@@ -53,7 +54,9 @@ func RegisterConfigLoadFunc(f ConfigLoadFunc) {
 }
 
 func DefaultConfigLoad(path string) *v2.MOSNConfig {
-	log.StartLogger.Infof("load config from :  %s", path)
+
+	log.StartLogger.Infof("load config from :  %s, actual path: %s", path, os.Getenv("CONFIG_URL"))
+
 	content, err := ioutil.ReadFile(path)
 	cfg := &v2.MOSNConfig{}
 	bodyStr := ""
@@ -61,7 +64,7 @@ func DefaultConfigLoad(path string) *v2.MOSNConfig {
 		//log.StartLogger.Fatalf("[config] [default load] load config failed, error: %v", err)
 		log.StartLogger.Errorf("[config] default load load local config failed, error %v", err)
 		log.StartLogger.Infof("[config] trying to get config from remote")
-		req, _ := http.NewRequest("GET", path, nil)
+		req, _ := http.NewRequest("GET", os.Getenv("CONFIG_URL"), nil)
 		res, _ := http.DefaultClient.Do(req)
 		//contentFromRemote, err := http.Get(path)
 		//if err != nil {

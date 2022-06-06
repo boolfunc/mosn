@@ -22,7 +22,7 @@ ENV TMP_FOLDER      /tmp
 
 RUN yum install -y \
        ssh wget curl perl logrotate make build-essential procps \
-       tsar tcpdump mpstat iostat vmstat sysstat \
+       tsar tcpdump mpstat iostat vmstat sysstat iptables \
        python-setuptools; yum clean all
 
 # pip
